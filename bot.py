@@ -1,108 +1,37 @@
-import asyncio
-from datetime import datetime, timedelta
-import pytz
+import requests
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, CallbackQueryHandler
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
-# -------------------------------
-# CONFIG
-# -------------------------------
-BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
+BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"  # Yahan apna bot token lagao
 
-# Pakistan cities with timezone offset
-CITIES = {
-    "Karachi": "Asia/Karachi",
-    "Lahore": "Asia/Karachi",
-    "Islamabad": "Asia/Karachi",
-    "Multan": "Asia/Karachi",
-    "Faisalabad": "Asia/Karachi",
-    "Gujranwala": "Asia/Karachi",
-    "Bahawalpur": "Asia/Karachi",
-    "Attock": "Asia/Karachi",
-    "Hafizabad": "Asia/Karachi",
-    "Layyah": "Asia/Karachi"
-}
-
-# Sehri & Iftar duas
-SEHRI_DUA = "وَبِصَوْمِ غَدٍ نَّوَيْتُ مِنْ شَهْرِ رَمَضَانَ"
-IFTAR_DUA = "اَللّٰهُمَّ اِنِّی لَکَ صُمْتُ وَبِکَ اٰمَنْتُ وَعَلَيْکَ تَوَکَّلْتُ وَعَلٰی رِزْقِکَ اَفْطَرْتُ"
-
-# Placeholder Ramzan schedule (sample, normally you fetch real timings)
-# Format: "HH:MM" in 24hr format
-RAMZAN_TIMINGS = {
-    "Karachi": {"sehri": "04:30", "iftar": "18:50"},
-    "Lahore": {"sehri": "04:35", "iftar": "18:55"},
-    "Islamabad": {"sehri": "04:32", "iftar": "18:52"},
-    "Multan": {"sehri": "04:34", "iftar": "18:54"},
-    "Faisalabad": {"sehri": "04:33", "iftar": "18:53"},
-    "Gujranwala": {"sehri": "04:33", "iftar": "18:53"},
-    "Bahawalpur": {"sehri": "04:36", "iftar": "18:56"},
-    "Attock": {"sehri": "04:31", "iftar": "18:51"},
-    "Hafizabad": {"sehri": "04:33", "iftar": "18:53"},
-    "Layyah": {"sehri": "04:35", "iftar": "18:55"}
-}
-
-# -------------------------------
-# HELPERS
-# -------------------------------
-def get_today_info():
-    # Gregorian date
-    now = datetime.now(pytz.timezone("Asia/Karachi"))
-    gregorian = now.strftime("%d-%m-%Y")
-
-    # Simple roza count (1-30)
-    ramzan_start = datetime(now.year, 4, 2, tzinfo=pytz.timezone("Asia/Karachi"))  # Example start date
-    day_num = (now - ramzan_start).days + 1
-    day_num = max(1, min(day_num, 30))  # Clamp 1-30
-
-    # Islamic date (simplified, just for display)
-    hijri_day = day_num
-    hijri_month = "Ramzan"
-
-    return f"📅 Gregorian: {gregorian}\n🕌 Islamic: {hijri_day} {hijri_month}\n🌙 Today: Roza {day_num}"
-
-def get_timing(city: str, action: str):
-    if city not in RAMZAN_TIMINGS:
-        return "City not found!"
-    time = RAMZAN_TIMINGS[city][action]
-    dua = SEHRI_DUA if action == "sehri" else IFTAR_DUA
-    emoji = "🌄" if action == "sehri" else "🌇"
-    return f"{emoji} {action.title()} time in {city}: {time}\n🙏 Dua:\n{dua}"
-
-# -------------------------------
-# HANDLERS
-# -------------------------------
+# Start command
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = f"✨ Ramzan Mubarak! ✨\n\n{get_today_info()}"
-    keyboard = [
-        [InlineKeyboardButton("Sehri 🌄", callback_data="sehri")],
-        [InlineKeyboardButton("Iftar 🌇", callback_data="iftar")]
-    ]
-    await update.message.reply_text(text, reply_markup=InlineKeyboardMarkup(keyboard))
+    cities = ["Karachi", "Lahore", "Islamabad", "Multan", "Peshawar"]
+    keyboard = [[InlineKeyboardButton(city, callback_data=city)] for city in cities]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text("Apni city select karo:", reply_markup=reply_markup)
 
-async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-
-    action = query.data  # 'sehri' or 'iftar'
-    keyboard = [[InlineKeyboardButton(city, callback_data=f"{action}|{city}")] for city in CITIES]
-    await query.edit_message_text(f"Select your city for {action.title()} time:", reply_markup=InlineKeyboardMarkup(keyboard))
-
+# Callback jab user city select kare
 async def city_selection(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+    city = query.data
 
-    data = query.data.split("|")
-    action, city = data[0], data[1]
-    result = get_timing(city, action)
-    await query.edit_message_text(result)
+    try:
+        url = f"http://api.aladhan.com/v1/timingsByCity?city={city}&country=Pakistan&method=2"
+        response = requests.get(url).json()
 
-# -------------------------------
-# MAIN
-# -------------------------------
-app = ApplicationBuilder().token(BOT_TOKEN).build()
-app.add_handler(CommandHandler("start", start))
-app.add_handler(CallbackQueryHandler(city_selection, pattern="^(sehri|iftar)\|"))
-app.add_handler(CallbackQueryHandler(button, pattern="^(sehri|iftar)$"))
+        sehri_time = response['data']['timings']['Fajr']
+        iftar_time = response['data']['timings']['Maghrib']
 
-app.run_polling()
+        await query.edit_message_text(f"{city} ke liye timings:\n🌙 Sehri: {sehri_time}\n🌇 Iftar: {iftar_time}")
+    except Exception as e:
+        await query.edit_message_text(f"Error aaya: {e}\nShayad API ya city invalid hai.")
+
+# Main function
+if __name__ == "__main__":
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CallbackQueryHandler(city_selection))
+    print("Bot chaloo ho gaya...")  # Logs ke liye
+    app.run_polling()
