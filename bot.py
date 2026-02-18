@@ -24,26 +24,24 @@ try:
     """)
     conn.commit()
 except sqlite3.Error as e:
-    print(f"Database Initialization Error: {e}")
+    print(f"Database Error: {e}")
 
 # -------- Helper Functions --------
 def get_prayer_times(city: str):
-    """Crash-proof API fetch for Fajr (Sehri) & Maghrib (Iftar)"""
+    """Fetch Fajr (Sehri) and Maghrib (Iftar) timings for Pakistan cities"""
     try:
         url = f"https://api.aladhan.com/v1/timingsByCity?city={city}&country=Pakistan&method=2"
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         data = response.json()
         timings = data.get("data", {}).get("timings", {})
-        fajr = timings.get("Fajr")
-        maghrib = timings.get("Maghrib")
-        return fajr, maghrib
+        return timings.get("Fajr"), timings.get("Maghrib")
     except Exception as e:
         print(f"API Error for city '{city}': {e}")
         return None, None
 
 def get_dates():
-    """Return Gregorian and Islamic date + day of Ramadan"""
+    """Return Gregorian and Hijri dates and current Ramadan day"""
     today = datetime.now()
     gregorian = today.strftime("%d-%m-%Y")
     try:
@@ -71,15 +69,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         print(f"Error sending start message: {e}")
 
-# -------- Callback Query --------
+# -------- Callback Query Handler --------
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     if query.data in ["sehri", "iftar"]:
         context.user_data["option"] = query.data
-        await query.message.reply_text("Apni city type karein (e.g., Lahore, Karachi):")
+        await query.message.reply_text("Apni city type karein (e.g., Lahore, Karachi, Multan):")
 
-# -------- Save City and Show Time --------
+# -------- Save City & Send Timing --------
 async def save_city(update: Update, context: ContextTypes.DEFAULT_TYPE):
     city = update.message.text.strip()
     user_id = update.effective_user.id
@@ -98,9 +96,9 @@ async def save_city(update: Update, context: ContextTypes.DEFAULT_TYPE):
         fajr, _ = get_prayer_times(city)
         if fajr:
             await update.message.reply_text(
-                f"🌙 Sehri Time for {city}: {fajr} 🕓\n"
-                "🥣 Aj aapke city me Sehri ka time hai!\n"
-                "🤲 Dua: وَبِصَوْمِ غَدٍ نَّوَيْتُ مِنْ شَهْرِ رَمَضَانَ 🌙"
+                f"🌙 Aj apke {city} me Sehri ka time: {fajr} 🕓\n"
+                "🤲 Roza rakhnay ki dua:\n"
+                "وَبِصَوْمِ غَدٍ نَّوَيْتُ مِنْ شَهْرِ رَمَضَانَ 🌙"
             )
         else:
             await update.message.reply_text("❌ Timing fetch nahi ho paayi, phir try karein.")
@@ -108,9 +106,9 @@ async def save_city(update: Update, context: ContextTypes.DEFAULT_TYPE):
         _, maghrib = get_prayer_times(city)
         if maghrib:
             await update.message.reply_text(
-                f"🌙 Iftar Time for {city}: {maghrib} 🕡\n"
-                "🍽️ Iftar ka waqt ho gaya! Allah ki shukriya ada karein.\n"
-                "🤲 Dua: اَللّٰهُمَّ اِنِّی لَکَ صُمْتُ وَبِکَ اٰمَنْتُ وَعَلَيْکَ تَوَکَّلْتُ وَعَلٰی رِزْقِکَ اَفْطَرْتُ 🌙"
+                f"🌙 Aj apke {city} me Iftar ka time: {maghrib} 🕡\n"
+                "🤲 Iftar ki dua:\n"
+                "اَللّٰهُمَّ اِنِّی لَکَ صُمْتُ وَبِکَ اٰمَنْتُ وَعَلَيْکَ تَوَکَّلْتُ وَعَلٰی رِزْقِکَ اَفْطَرْتُ 🌙"
             )
         else:
             await update.message.reply_text("❌ Timing fetch nahi ho paayi, phir try karein.")
@@ -130,7 +128,7 @@ if not BOT_TOKEN:
 
 app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-# Handlers
+# Add Handlers
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, save_city))
