@@ -1,12 +1,16 @@
 # bot.py
 import requests
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters
+from telegram.ext import (
+    ApplicationBuilder, CommandHandler, CallbackQueryHandler,
+    ContextTypes, MessageHandler, filters
+)
 from datetime import datetime
 import pytz
+import os
 
-# 🔹 Bot Token (use environment variable in production for safety)
-BOT_TOKEN = "8568376187:AAGAm4ocyB-TyFiPUTBeTYArdBC9KadXbzw"
+# 🔹 Bot Token (environment variable recommended)
+BOT_TOKEN = os.getenv("BOT_TOKEN", "YOUR_TELEGRAM_BOT_TOKEN")
 
 # 🔹 Pakistan Cities
 CITIES = [
@@ -84,7 +88,7 @@ async def city_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 app = ApplicationBuilder().token(BOT_TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button))
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, city_handler))  # ✅ Corrected
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, city_handler))
 
 # 🔹 Run bot
 app.run_polling()
