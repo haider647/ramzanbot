@@ -69,7 +69,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # ====== Main ======
 if __name__ == "__main__":
-    BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"  # apna bot token yahan lagao
+    BOT_TOKEN = "8568376187:AAGAm4ocyB-TyFiPUTBeTYArdBC9KadXbzw   "  #
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
