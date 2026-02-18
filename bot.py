@@ -27,7 +27,7 @@ except sqlite3.Error as e:
     print(f"Database Initialization Error: {e}")
 
 # -------- Helper Functions --------
-def get_prayer_times(city):
+def get_prayer_times(city: str):
     """Crash-proof API fetch for Fajr (Sehri) & Maghrib (Iftar)"""
     try:
         url = f"https://api.aladhan.com/v1/timingsByCity?city={city}&country=Pakistan&method=2"
@@ -35,16 +35,11 @@ def get_prayer_times(city):
         response.raise_for_status()
         data = response.json()
         timings = data.get("data", {}).get("timings", {})
-        fajr = timings.get("Fajr", None)
-        maghrib = timings.get("Maghrib", None)
-        if not fajr or not maghrib:
-            return None, None
+        fajr = timings.get("Fajr")
+        maghrib = timings.get("Maghrib")
         return fajr, maghrib
-    except requests.exceptions.RequestException as e:
-        print(f"API Request Error: {e}")
-        return None, None
     except Exception as e:
-        print(f"Unexpected API Error: {e}")
+        print(f"API Error for city '{city}': {e}")
         return None, None
 
 def get_dates():
@@ -80,14 +75,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    user_id = query.from_user.id
-
     if query.data in ["sehri", "iftar"]:
-        try:
-            await query.message.reply_text("Apni city type karein (e.g., Lahore, Karachi):")
-            context.user_data["option"] = query.data
-        except Exception as e:
-            print(f"Error asking city: {e}")
+        context.user_data["option"] = query.data
+        await query.message.reply_text("Apni city type karein (e.g., Lahore, Karachi):")
 
 # -------- Save City and Show Time --------
 async def save_city(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -107,45 +97,40 @@ async def save_city(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if option == "sehri":
         fajr, _ = get_prayer_times(city)
         if fajr:
-            try:
-                await update.message.reply_text(
-                    f"🌙 Sehri Time for {city}: {fajr} 🕓\n"
-                    "🥣 Aj aapke city me Sehri ka time hai!\n"
-                    "🤲 Dua: وَبِصَوْمِ غَدٍ نَّوَيْتُ مِنْ شَهْرِ رَمَضَانَ 🌙"
-                )
-            except Exception as e:
-                print(f"Error sending Sehri message: {e}")
+            await update.message.reply_text(
+                f"🌙 Sehri Time for {city}: {fajr} 🕓\n"
+                "🥣 Aj aapke city me Sehri ka time hai!\n"
+                "🤲 Dua: وَبِصَوْمِ غَدٍ نَّوَيْتُ مِنْ شَهْرِ رَمَضَانَ 🌙"
+            )
         else:
             await update.message.reply_text("❌ Timing fetch nahi ho paayi, phir try karein.")
     elif option == "iftar":
         _, maghrib = get_prayer_times(city)
         if maghrib:
-            try:
-                await update.message.reply_text(
-                    f"🌙 Iftar Time for {city}: {maghrib} 🕡\n"
-                    "🍽️ Iftar ka waqt ho gaya! Allah ki shukriya ada karein.\n"
-                    "🤲 Dua: اَللّٰهُمَّ اِنِّی لَکَ صُمْتُ وَبِکَ اٰمَنْتُ وَعَلَيْکَ تَوَکَّلْتُ وَعَلٰی رِزْقِکَ اَفْطَرْتُ 🌙"
-                )
-            except Exception as e:
-                print(f"Error sending Iftar message: {e}")
+            await update.message.reply_text(
+                f"🌙 Iftar Time for {city}: {maghrib} 🕡\n"
+                "🍽️ Iftar ka waqt ho gaya! Allah ki shukriya ada karein.\n"
+                "🤲 Dua: اَللّٰهُمَّ اِنِّی لَکَ صُمْتُ وَبِکَ اٰمَنْتُ وَعَلَيْکَ تَوَکَّلْتُ وَعَلٰی رِزْقِکَ اَفْطَرْتُ 🌙"
+            )
         else:
             await update.message.reply_text("❌ Timing fetch nahi ho paayi, phir try karein.")
     else:
         await update.message.reply_text("❌ Please select Sehri or Iftar first using /start")
 
-# -------- Dua Command --------
+# -------- /dua Command --------
 async def dua(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        await update.message.reply_text(
-            "✨ Ramzan Dua ✨\nاللهم إنك عفو تحب العفو فاعف عني 🤲🌙\n\nAllah aapko barkat aur sukoon ata farmaaye. Ameen."
-        )
-    except Exception as e:
-        print(f"Error sending Dua: {e}")
+    await update.message.reply_text(
+        "✨ Ramzan Dua ✨\nاللهم إنك عفو تحب العفو فاعف عني 🤲🌙\n\nAllah aapko barkat aur sukoon ata farmaaye. Ameen."
+    )
 
 # -------- Main --------
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+if not BOT_TOKEN:
+    raise ValueError("BOT_TOKEN environment variable not set!")
 
 app = ApplicationBuilder().token(BOT_TOKEN).build()
+
+# Handlers
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, save_city))
