@@ -20,7 +20,15 @@ CITIES = {
     "Islamabad": {"city": "Islamabad", "country": "Pakistan"},
     "Karachi": {"city": "Karachi", "country": "Pakistan"},
     "Peshawar": {"city": "Peshawar", "country": "Pakistan"},
-    "Multan": {"city": "Multan", "country": "Pakistan"}
+    "Rawalpindi": {"city": "Rawalpindi", "country": "Pakistan"},
+    "Kahuta": {"city": "Kahuta", "country": "Pakistan"},
+    "Multan": {"city": "Multan", "country": "Pakistan"},
+    "Layyah": {"city": "Layyah", "country": "Pakistan"},
+    "Hafizabad": {"city": "Hafizabad", "country": "Pakistan"},
+    "Gujranwala": {"city": "Gujranwala", "country": "Pakistan"},
+    "Bahawalpur": {"city": "Bahawalpur", "country": "Pakistan"},
+    "Patoki": {"city": "Patoki", "country": "Pakistan"},
+    "Attock": {"city": "Attock", "country": "Pakistan"}
 }
 
 # -------------------- Duas --------------------
