@@ -2,7 +2,7 @@ import requests
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
-BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"  # Yahan apna bot token lagao
+BOT_TOKEN = "8568376187:AAGAm4ocyB-TyFiPUTBeTYArdBC9KadXbzw   "#
 
 # Start command
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
