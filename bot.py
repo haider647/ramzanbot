@@ -12,33 +12,93 @@ from telegram.ext import (
 
 BOT_TOKEN = "8568376187:AAGAm4ocyB-TyFiPUTBeTYArdBC9KadXbzw"
 
-# -------------------- Ramadan Calendar --------------------
+# -------------------- Ramadan Calendar 2026 --------------------
 # Format: "DD-MM" : ("Suhoor", "Iftar")
 CITIES_CALENDAR = {
     "Lahore": {
-        "19-02": ("5:18 AM", "5:54 PM"), "20-02": ("5:17 AM", "5:54 PM"), # ... aur complete month
+        "19-02": ("5:18 AM", "5:54 PM"), "20-02": ("5:17 AM", "5:54 PM"), "21-02": ("5:16 AM", "5:55 PM"),
+        "22-02": ("5:16 AM", "5:56 PM"), "23-02": ("5:15 AM", "5:57 PM"), "24-02": ("5:14 AM", "5:58 PM"),
+        "25-02": ("5:12 AM", "5:58 PM"), "26-02": ("5:11 AM", "5:59 PM"), "27-02": ("5:10 AM", "6:00 PM"),
+        "28-02": ("5:09 AM", "6:01 PM"), "01-03": ("5:08 AM", "6:01 PM"), "02-03": ("5:07 AM", "6:02 PM"),
+        "03-03": ("5:06 AM", "6:03 PM"), "04-03": ("5:05 AM", "6:04 PM"), "05-03": ("5:04 AM", "6:04 PM"),
+        "06-03": ("5:03 AM", "6:05 PM"), "07-03": ("5:01 AM", "6:06 PM"), "08-03": ("5:00 AM", "6:07 PM"),
+        "09-03": ("4:59 AM", "6:07 PM"), "10-03": ("4:58 AM", "6:08 PM"), "11-03": ("4:59 AM", "6:09 PM"),
+        "12-03": ("4:58 AM", "6:09 PM"), "13-03": ("4:56 AM", "6:10 PM"), "14-03": ("4:55 AM", "6:11 PM"),
+        "15-03": ("4:54 AM", "6:12 PM"), "16-03": ("4:53 AM", "6:12 PM"), "17-03": ("4:51 AM", "6:13 PM"),
+        "18-03": ("4:50 AM", "6:14 PM"), "19-03": ("4:46 AM", "6:14 PM"), "20-03": ("4:45 AM", "6:15 PM"),
     },
     "Islamabad": {
-        "19-02": ("5:24 AM", "5:56 PM"), "20-02": ("5:23 AM", "5:57 PM"),
+        "19-02": ("5:24 AM", "5:56 PM"), "20-02": ("5:23 AM", "5:57 PM"), "21-02": ("5:22 AM", "5:58 PM"),
+        "22-02": ("5:21 AM", "5:59 PM"), "23-02": ("5:20 AM", "6:00 PM"), "24-02": ("5:19 AM", "6:01 PM"),
+        "25-02": ("5:18 AM", "6:02 PM"), "26-02": ("5:16 AM", "6:03 PM"), "27-02": ("5:15 AM", "6:03 PM"),
+        "28-02": ("5:14 AM", "6:04 PM"), "01-03": ("5:13 AM", "6:05 PM"), "02-03": ("5:12 AM", "6:06 PM"),
+        "03-03": ("5:11 AM", "6:07 PM"), "04-03": ("5:09 AM", "6:08 PM"), "05-03": ("5:08 AM", "6:08 PM"),
+        "06-03": ("5:07 AM", "6:09 PM"), "07-03": ("5:06 AM", "6:10 PM"), "08-03": ("5:04 AM", "6:11 PM"),
+        "09-03": ("5:03 AM", "6:12 PM"), "10-03": ("5:02 AM", "6:12 PM"), "11-03": ("5:00 AM", "6:13 PM"),
+        "12-03": ("4:59 AM", "6:14 PM"), "13-03": ("4:58 AM", "6:15 PM"), "14-03": ("4:56 AM", "6:16 PM"),
+        "15-03": ("4:55 AM", "6:16 PM"), "16-03": ("4:54 AM", "6:17 PM"), "17-03": ("4:52 AM", "6:18 PM"),
+        "18-03": ("4:51 AM", "6:19 PM"), "19-03": ("4:49 AM", "6:19 PM"), "20-03": ("4:48 AM", "6:20 PM"),
     },
     "Rawalpindi": {
-        "19-02": ("5:25 AM", "5:55 PM"), "20-02": ("5:24 AM", "5:56 PM"),
+        "19-02": ("5:25 AM", "5:55 PM"), "20-02": ("5:24 AM", "5:56 PM"), "21-02": ("5:23 AM", "5:57 PM"),
+        "22-02": ("5:22 AM", "5:58 PM"), "23-02": ("5:21 AM", "5:59 PM"), "24-02": ("5:20 AM", "6:00 PM"),
+        "25-02": ("5:19 AM", "6:01 PM"), "26-02": ("5:17 AM", "6:02 PM"), "27-02": ("5:16 AM", "6:02 PM"),
+        "28-02": ("5:15 AM", "6:03 PM"), "01-03": ("5:14 AM", "6:04 PM"), "02-03": ("5:13 AM", "6:05 PM"),
+        "03-03": ("5:12 AM", "6:06 PM"), "04-03": ("5:10 AM", "6:07 PM"), "05-03": ("5:09 AM", "6:07 PM"),
+        "06-03": ("5:08 AM", "6:08 PM"), "07-03": ("5:07 AM", "6:09 PM"), "08-03": ("5:05 AM", "6:10 PM"),
+        "09-03": ("5:04 AM", "6:11 PM"), "10-03": ("5:03 AM", "6:11 PM"), "11-03": ("5:01 AM", "6:12 PM"),
+        "12-03": ("5:00 AM", "6:13 PM"), "13-03": ("4:59 AM", "6:14 PM"), "14-03": ("4:57 AM", "6:14 PM"),
+        "15-03": ("4:56 AM", "6:15 PM"), "16-03": ("4:55 AM", "6:16 PM"), "17-03": ("4:53 AM", "6:17 PM"),
+        "18-03": ("4:52 AM", "6:17 PM"), "19-03": ("4:50 AM", "6:18 PM"), "20-03": ("4:49 AM", "6:19 PM"),
     },
     "Peshawar": {
-        "19-02": ("5:31 AM", "6:01 PM"), "20-02": ("5:30 AM", "6:02 PM"),
+        "19-02": ("5:31 AM", "6:01 PM"), "20-02": ("5:30 AM", "6:02 PM"), "21-02": ("5:29 AM", "6:03 PM"),
+        "22-02": ("5:28 AM", "6:04 PM"), "23-02": ("5:27 AM", "6:04 PM"), "24-02": ("5:26 AM", "6:05 PM"),
+        "25-02": ("5:24 AM", "6:06 PM"), "26-02": ("5:23 AM", "6:07 PM"), "27-02": ("5:22 AM", "6:08 PM"),
+        "28-02": ("5:21 AM", "6:09 PM"), "01-03": ("5:20 AM", "6:10 PM"), "02-03": ("5:19 AM", "6:10 PM"),
+        "03-03": ("5:17 AM", "6:11 PM"), "04-03": ("5:16 AM", "6:12 PM"), "05-03": ("5:15 AM", "6:13 PM"),
+        "06-03": ("5:14 AM", "6:14 PM"), "07-03": ("5:12 AM", "6:15 PM"), "08-03": ("5:11 AM", "6:15 PM"),
+        "09-03": ("5:10 AM", "6:16 PM"), "10-03": ("5:08 AM", "6:17 PM"), "11-03": ("5:07 AM", "6:18 PM"),
+        "12-03": ("5:06 AM", "6:19 PM"), "13-03": ("5:04 AM", "6:19 PM"), "14-03": ("5:03 AM", "6:20 PM"),
+        "15-03": ("5:02 AM", "6:21 PM"), "16-03": ("5:00 AM", "6:22 PM"), "17-03": ("4:59 AM", "6:23 PM"),
+        "18-03": ("4:57 AM", "6:23 PM"), "19-03": ("4:56 AM", "6:24 PM"), "20-03": ("4:55 AM", "6:25 PM"),
     },
     "Gujranwala": {
-        "19-02": ("5:20 AM", "5:52 PM"), "20-02": ("5:19 AM", "5:53 PM"),
+        "19-02": ("5:20 AM", "5:52 PM"), "20-02": ("5:19 AM", "5:53 PM"), "21-02": ("5:18 AM", "5:54 PM"),
+        "22-02": ("5:17 AM", "5:55 PM"), "23-02": ("5:16 AM", "5:56 PM"), "24-02": ("5:15 AM", "5:57 PM"),
+        "25-02": ("5:14 AM", "5:57 PM"), "26-02": ("5:13 AM", "5:58 PM"), "27-02": ("5:12 AM", "5:59 PM"),
+        "28-02": ("5:11 AM", "6:00 PM"), "01-03": ("5:10 AM", "6:00 PM"), "02-03": ("5:09 AM", "6:01 PM"),
+        "03-03": ("5:07 AM", "6:02 PM"), "04-03": ("5:06 AM", "6:03 PM"), "05-03": ("5:05 AM", "6:04 PM"),
+        "06-03": ("5:04 AM", "6:04 PM"), "07-03": ("5:03 AM", "6:05 PM"), "08-03": ("5:01 AM", "6:06 PM"),
+        "09-03": ("5:00 AM", "6:07 PM"), "10-03": ("4:59 AM", "6:07 PM"), "11-03": ("4:58 AM", "6:08 PM"),
+        "12-03": ("4:56 AM", "6:09 PM"), "13-03": ("4:55 AM", "6:09 PM"), "14-03": ("4:54 AM", "6:10 PM"),
+        "15-03": ("4:53 AM", "6:11 PM"), "16-03": ("4:51 AM", "6:12 PM"), "17-03": ("4:50 AM", "6:12 PM"),
+        "18-03": ("4:49 AM", "6:13 PM"), "19-03": ("4:47 AM", "6:14 PM"), "20-03": ("4:46 AM", "6:14 PM"),
     },
     "Multan": {
-        "19-02": ("5:31 AM", "6:05 PM"), "20-02": ("5:30 AM", "6:06 PM"),
+        "19-02": ("5:31 AM", "6:05 PM"), "20-02": ("5:30 AM", "6:06 PM"), "21-02": ("5:29 AM", "6:07 PM"),
+        "22-02": ("5:28 AM", "6:08 PM"), "23-02": ("5:27 AM", "6:08 PM"), "24-02": ("5:26 AM", "6:09 PM"),
+        "25-02": ("5:25 AM", "6:10 PM"), "26-02": ("5:24 AM", "6:11 PM"), "27-02": ("5:23 AM", "6:11 PM"),
+        "28-02": ("5:22 AM", "6:12 PM"), "01-03": ("5:21 AM", "6:13 PM"), "02-03": ("5:20 AM", "6:13 PM"),
+        "03-03": ("5:19 AM", "6:14 PM"), "04-03": ("5:18 AM", "6:15 PM"), "05-03": ("5:17 AM", "6:15 PM"),
+        "06-03": ("5:15 AM", "6:16 PM"), "07-03": ("5:14 AM", "6:17 PM"), "08-03": ("5:13 AM", "6:17 PM"),
+        "09-03": ("5:12 AM", "6:18 PM"), "10-03": ("5:11 AM", "6:19 PM"), "11-03": ("5:10 AM", "6:19 PM"),
+        "12-03": ("5:08 AM", "6:20 PM"), "13-03": ("5:07 AM", "6:21 PM"), "14-03": ("5:06 AM", "6:21 PM"),
+        "15-03": ("5:05 AM", "6:22 PM"), "16-03": ("5:04 AM", "6:23 PM"), "17-03": ("5:02 AM", "6:23 PM"),
+        "18-03": ("5:01 AM", "6:24 PM"), "19-03": ("5:00 AM", "6:25 PM"), "20-03": ("4:59 AM", "6:26 PM"),
     },
-    "Layyah": {},
-    "Hafizabad": {},
-    "Bahawalpur": {},
-    "Pattoki": {},
-    "Attock": {},
-    "Karachi": {},
+    "Karachi": {
+        "19-02": ("5:46 AM", "6:29 PM"), "20-02": ("5:45 AM", "6:30 PM"), "21-02": ("5:44 AM", "6:31 PM"),
+        "22-02": ("5:44 AM", "6:31 PM"), "23-02": ("5:43 AM", "6:32 PM"), "24-02": ("5:42 AM", "6:32 PM"),
+        "25-02": ("5:41 AM", "6:33 PM"), "26-02": ("5:40 AM", "6:33 PM"), "27-02": ("5:40 AM", "6:34 PM"),
+        "28-02": ("5:39 AM", "6:34 PM"), "01-03": ("5:38 AM", "6:35 PM"), "02-03": ("5:37 AM", "6:35 PM"),
+        "03-03": ("5:36 AM", "6:36 PM"), "04-03": ("5:35 AM", "6:36 PM"), "05-03": ("5:34 AM", "6:37 PM"),
+        "06-03": ("5:33 AM", "6:37 PM"), "07-03": ("5:32 AM", "6:38 PM"), "08-03": ("5:31 AM", "6:38 PM"),
+        "09-03": ("5:30 AM", "6:39 PM"), "10-03": ("5:30 AM", "6:39 PM"), "11-03": ("5:29 AM", "6:40 PM"),
+        "12-03": ("5:28 AM", "6:40 PM"), "13-03": ("5:27 AM", "6:41 PM"), "14-03": ("5:25 AM", "6:41 PM"),
+        "15-03": ("5:24 AM", "6:42 PM"), "16-03": ("5:23 AM", "6:42 PM"), "17-03": ("5:22 AM", "6:43 PM"),
+        "18-03": ("5:21 AM", "6:43 PM"), "19-03": ("5:20 AM", "6:43 PM"), "20-03": ("5:19 AM", "6:44 PM"),
+    },
 }
 
 # -------------------- Duas --------------------
@@ -46,79 +106,4 @@ SEHRI_DUA = "🤲 *Sehri Dua:* وَبِصَوْمِ غَدٍ نَّوَيْتُ 
 IFTAR_DUA = "🤲 *Iftar Dua:* اَللّٰهُمَّ اِنِّی لَکَ صُمْتُ وَبِکَ اٰمَنْتُ وَعَلَيْکَ تَوَکَّلْتُ وَعَلٰی رِزْقِکَ اَفْطَرْتُ"
 
 # -------------------- Random Hadees --------------------
-HADEES_LIST = [
-    "📖 *Hadees:* الصوم جنة (Roza dhaal hai). — Sahih Bukhari",
-    "📖 *Hadees:* Jo shakhs imaan ke saath aur sawab ki niyyat se roza rakhe, uske pichle gunaah maaf kar diye jate hain. — Sahih Bukhari",
-    "📖 *Hadees:* Roza aur Quran qiyamat ke din shafa'at karenge. — Musnad Ahmad",
-    "📖 *Hadees:* Roza daar ke liye do khushiyan hain: ek iftar ke waqt aur ek apne Rab se mulaqat ke waqt. — Sahih Muslim"
-]
-
-# -------------------- Keyboards --------------------
-def main_menu():
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🌙 Sehri", callback_data="sehri")],
-        [InlineKeyboardButton("🌇 Iftar", callback_data="iftar")]
-    ])
-
-def cities_menu(action):
-    buttons = []
-    for city in CITIES_CALENDAR.keys():
-        buttons.append([InlineKeyboardButton(city, callback_data=f"{action}|{city}")])
-    return InlineKeyboardMarkup(buttons)
-
-# -------------------- Handlers --------------------
-async def ramzan_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🌙 *Ramzan Mubarak!*\n\nSehri ya Iftar time dekhna hai?",
-        reply_markup=main_menu(),
-        parse_mode="Markdown"
-    )
-
-async def text_trigger(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message.text.lower() == "ramzan":
-        await ramzan_cmd(update, context)
-
-async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    data = query.data
-
-    if data in ["sehri", "iftar"]:
-        await query.edit_message_text(
-            "📍 *Apni city select karein:*",
-            reply_markup=cities_menu(data),
-            parse_mode="Markdown"
-        )
-    else:
-        action, city = data.split("|")
-        today = datetime.now().strftime("%d-%m")
-        calendar = CITIES_CALENDAR.get(city)
-        if calendar is None or today not in calendar:
-            await query.edit_message_text("⚠️ Timing fetch nahi ho paayi. Try later.")
-            return
-
-        sehri, iftar = calendar[today]
-        time_value = sehri if action == "sehri" else iftar
-        random_hadees = random.choice(HADEES_LIST)
-        dua = SEHRI_DUA if action == "sehri" else IFTAR_DUA
-        roza_number = list(calendar.keys()).index(today) + 1
-
-        await query.edit_message_text(
-            f"📍 *City:* {city}\n"
-            f"📅 *Date:* {today}\n"
-            f"⏰ *{action.capitalize()} Time:* {time_value}\n"
-            f"Aj Ramzan ka ({roza_number}) roza hay\n\n"
-            f"{dua}\n\n"
-            f"{random_hadees}",
-            parse_mode="Markdown"
-        )
-
-# -------------------- Setup --------------------
-app = ApplicationBuilder().token(BOT_TOKEN).build()
-
-app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), text_trigger))
-app.add_handler(CommandHandler("Ramzan", ramzan_cmd))
-app.add_handler(CallbackQueryHandler(button_handler))
-
-print("Bot started...")
-app.run_polling()
+HA
