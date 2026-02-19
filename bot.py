@@ -201,7 +201,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"📍 *City:* {city}\n"
         f"📅 *Date:* {today}\n"
         f"⏰ *{action.capitalize()} Time:* {time_value} _(Time may vary by 2-3 mins)_\n"
-        f"Aj Ramzan ka ({roza_number}) roza hay"n\n"
+        f"Aj Ramzan ka ({roza_number}) roza hay"\n\n"
         f"{dua}\n\n"
         f"{random_hadees}",
         parse_mode="Markdown"
