@@ -9,6 +9,12 @@ from telegram.ext import (
     ContextTypes,
     filters
 )
+def get_ordinal(n):
+    if 10 <= n % 100 <= 20:
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
+    return f"{n}{suffix}"
 
 BOT_TOKEN = "8568376187:AAGAm4ocyB-TyFiPUTBeTYArdBC9KadXbzw"
 
@@ -195,12 +201,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     random_hadees = random.choice(HADEES_LIST)
     dua = SEHRI_DUA if action == "sehri" else IFTAR_DUA
     roza_number = list(calendar.keys()).index(today) + 1
-
+ordinal_roza = get_ordinal(roza_number)
     await query.edit_message_text(
         f"📍 *City:* {city}\n"
         f"📅 *Date:* {today}\n"
         f"⏰ *{action.capitalize()} Time:* {time_value} _(Time may vary by 2-3 mins)_\n"
-        f"Aj Ramzan ka ({roza_number}th) roza hay\n\n"
+        f"Aj Ramzan ka ({ordinal_roza}) roza hay"\n\n"
         f"{dua}\n\n"
         f"{random_hadees}",
         parse_mode="Markdown"
