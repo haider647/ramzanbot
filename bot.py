@@ -1,4 +1,3 @@
-
 import requests
 import random
 from datetime import datetime
@@ -14,47 +13,36 @@ from telegram.ext import (
 BOT_TOKEN = "8568376187:AAGAm4ocyB-TyFiPUTBeTYArdBC9KadXbzw"
 
 # -------------------- Cities --------------------
-CITIES = {
-    "Lahore": {"city": "Lahore", "country": "Pakistan"},
-    "Islamabad": {"city": "Islamabad", "country": "Pakistan"},
-    "Karachi": {"city": "Karachi", "country": "Pakistan"},
-    "Peshawar": {"city": "Peshawar", "country": "Pakistan"},
-    "Rawalpindi": {"city": "Rawalpindi", "country": "Pakistan"},
-    "Kahuta": {"city": "Kahuta", "country": "Pakistan"},
-    "Multan": {"city": "Multan", "country": "Pakistan"},
-    "Layyah": {"city": "Layyah", "country": "Pakistan"},
-    "Hafizabad": {"city": "Hafizabad", "country": "Pakistan"},
-    "Gujranwala": {"city": "Gujranwala", "country": "Pakistan"},
-    "Bahawalpur": {"city": "Bahawalpur", "country": "Pakistan"},
-    "Patoki": {"city": "Patoki", "country": "Pakistan"},
-    "Attock": {"city": "Attock", "country": "Pakistan"}
-}
+CITIES = [
+    "Lahore", "Islamabad", "Karachi", "Peshawar",
+    "Rawalpindi", "Kahuta", "Multan", "Layyah",
+    "Hafizabad", "Gujranwala", "Bahawalpur", "Pattoki", "Attock"
+]
 
 # -------------------- Duas --------------------
-SEHRI_DUA = "🤲 *Sehri Dua:* وَبِصَوْمِ غَدٍ نَّوَيْتُ مِنْ شَهْرِ رَمَضَانَ"
+SEHRI_DUA = "🤲 *Sehri Dua:* وَبِصَوْمِ غَدٍ نَّوَيْتُ مِنْشَهْرِ رَمَضَانَ"
 IFTAR_DUA = "🤲 *Iftar Dua:* اَللّٰهُمَّ اِنِّی لَکَ صُمْتُ وَبِکَ اٰمَنْتُ وَعَلَيْکَ تَوَکَّلْتُ وَعَلٰی رِزْقِکَ اَفْطَرْتُ"
 
 # -------------------- Random Hadees --------------------
 HADEES_LIST = [
-    "📖 *Hadees:* الصوم جنة (Roza dhaal hai). — Sahih Bukhari",
-    "📖 *Hadees:* Jo shakhs imaan ke saath aur sawab ki niyyat se roza rakhe, uske pichle gunaah maaf kar diye jate hain. — Sahih Bukhari",
+    "📖 *Hadees:* الصوم جنة — Sahih Bukhari",
+    "📖 *Hadees:* Jo shakhs imaan ke saath roza rakhe, uske pichle gunaah maaf ho jate hain. — Sahih Bukhari",
     "📖 *Hadees:* Roza aur Quran qiyamat ke din shafa'at karenge. — Musnad Ahmad",
     "📖 *Hadees:* Roza daar ke liye do khushiyan hain: ek iftar ke waqt aur ek apne Rab se mulaqat ke waqt. — Sahih Muslim"
 ]
 
 # -------------------- API Function --------------------
-def fetch_times(city, country):
+def get_prayer_times(city):
     try:
-        url = f"http://api.aladhan.com/v1/timingsByCity?city={city}&country={country}&method=2&school=1"
+        url = f"https://www.hamariweb.com/api/prayertimes?city={city}&country=Pakistan"
         response = requests.get(url, timeout=10).json()
-        times = response["data"]["timings"]
 
-        sehri = datetime.strptime(times["Fajr"], "%H:%M").strftime("%I:%M %p")
-        iftar = datetime.strptime(times["Maghrib"], "%H:%M").strftime("%I:%M %p")
+        # Fajr = Sehri, Maghrib = Iftar
+        sehri = datetime.strptime(response['Fajr'], "%H:%M").strftime("%I:%M %p")
+        iftar = datetime.strptime(response['Maghrib'], "%H:%M").strftime("%I:%M %p")
 
         return sehri, iftar
-    except Exception as e:
-        print(f"Error fetching times for {city}: {e}")
+    except:
         return None, None
 
 # -------------------- Keyboards --------------------
@@ -65,15 +53,13 @@ def main_menu():
     ])
 
 def cities_menu(action):
-    buttons = []
-    for city in CITIES.keys():
-        buttons.append([InlineKeyboardButton(city, callback_data=f"{action}|{city}")])
+    buttons = [[InlineKeyboardButton(city, callback_data=f"{action}|{city}")] for city in CITIES]
     return InlineKeyboardMarkup(buttons)
 
 # -------------------- Handlers --------------------
 async def ramzan_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "🌙 *Ramzan Mubarak!*\n\nSehri ya Iftar time dekhna hai?",
+        "🌙 *Ramzan Mubarak!*\n\nSehri ya Iftar ka time dekhna hai?",
         reply_markup=main_menu(),
         parse_mode="Markdown"
     )
@@ -95,16 +81,15 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     else:
         action, city = data.split("|")
-        city_info = CITIES.get(city)
+        sehri, iftar = get_prayer_times(city)
 
-        sehri, iftar = fetch_times(city_info["city"], city_info["country"])
         if sehri is None:
             await query.edit_message_text("⚠️ Timing fetch nahi ho paayi. Try later.")
             return
 
-        random_hadees = random.choice(HADEES_LIST)
-        dua = SEHRI_DUA if action == "sehri" else IFTAR_DUA
         time_value = sehri if action == "sehri" else iftar
+        dua = SEHRI_DUA if action == "sehri" else IFTAR_DUA
+        random_hadees = random.choice(HADEES_LIST)
 
         await query.edit_message_text(
             f"📍 *City:* {city}\n"
