@@ -206,7 +206,7 @@ ordinal_roza = get_ordinal(roza_number)
         f"📍 *City:* {city}\n"
         f"📅 *Date:* {today}\n"
         f"⏰ *{action.capitalize()} Time:* {time_value} _(Time may vary by 2-3 mins)_\n"
-        f"Aj Ramzan ka ({ordinal_roza}) roza hay"\n\n"
+        f"Aj Ramzan ka ({ordinal_roza}) roza hay"
         f"{dua}\n\n"
         f"{random_hadees}",
         parse_mode="Markdown"
