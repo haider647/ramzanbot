@@ -6,7 +6,6 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
     ApplicationBuilder,
     CallbackQueryHandler,
-    CommandHandler,
     MessageHandler,
     ContextTypes,
     filters
@@ -46,7 +45,7 @@ HADEES_LIST = [
 # -------------------- API Function --------------------
 def fetch_times(city, country):
     try:
-        url = f"http://api.aladhan.com/v1/timingsByCity?city={city}&country={country}&method=2"
+        url = f"http://api.aladhan.com/v1/timingsByCity?city={city}&country={country}&method=2&school=1"
         response = requests.get(url, timeout=10).json()
         times = response["data"]["timings"]
 
@@ -54,7 +53,8 @@ def fetch_times(city, country):
         iftar = datetime.strptime(times["Maghrib"], "%H:%M").strftime("%I:%M %p")
 
         return sehri, iftar
-    except:
+    except Exception as e:
+        print(f"Error fetching times for {city}: {e}")
         return None, None
 
 # -------------------- Keyboards --------------------
@@ -98,7 +98,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         city_info = CITIES.get(city)
 
         sehri, iftar = fetch_times(city_info["city"], city_info["country"])
-
         if sehri is None:
             await query.edit_message_text("⚠️ Timing fetch nahi ho paayi. Try later.")
             return
@@ -119,7 +118,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 app = ApplicationBuilder().token(BOT_TOKEN).build()
 
 app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), text_trigger))
-app.add_handler(CommandHandler("Ramzan", ramzan_cmd))
 app.add_handler(CallbackQueryHandler(button_handler))
 
 print("Bot started...")
