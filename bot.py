@@ -1,33 +1,44 @@
-import requests
 import random
 from datetime import datetime
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
     ApplicationBuilder,
     CallbackQueryHandler,
-    MessageHandler,
     CommandHandler,
+    MessageHandler,
     ContextTypes,
     filters
 )
 
 BOT_TOKEN = "8568376187:AAGAm4ocyB-TyFiPUTBeTYArdBC9KadXbzw"
 
-# -------------------- Cities --------------------
-CITIES = {
-    "Lahore": {"city": "Lahore", "country": "Pakistan"},
-    "Islamabad": {"city": "Islamabad", "country": "Pakistan"},
-    "Karachi": {"city": "Karachi", "country": "Pakistan"},
-    "Peshawar": {"city": "Peshawar", "country": "Pakistan"},
-    "Rawalpindi": {"city": "Rawalpindi", "country": "Pakistan"},
-    "Kahuta": {"city": "Kahuta", "country": "Pakistan"},
-    "Multan": {"city": "Multan", "country": "Pakistan"},
-    "Layyah": {"city": "Layyah", "country": "Pakistan"},
-    "Hafizabad": {"city": "Hafizabad", "country": "Pakistan"},
-    "Gujranwala": {"city": "Gujranwala", "country": "Pakistan"},
-    "Bahawalpur": {"city": "Bahawalpur", "country": "Pakistan"},
-    "Pattoki": {"city": "Pattoki", "country": "Pakistan"},
-    "Attock": {"city": "Attock", "country": "Pakistan"}
+# -------------------- Ramadan Calendar --------------------
+# Format: "DD-MM" : ("Suhoor", "Iftar")
+CITIES_CALENDAR = {
+    "Lahore": {
+        "19-02": ("5:18 AM", "5:54 PM"), "20-02": ("5:17 AM", "5:54 PM"), # ... aur complete month
+    },
+    "Islamabad": {
+        "19-02": ("5:24 AM", "5:56 PM"), "20-02": ("5:23 AM", "5:57 PM"),
+    },
+    "Rawalpindi": {
+        "19-02": ("5:25 AM", "5:55 PM"), "20-02": ("5:24 AM", "5:56 PM"),
+    },
+    "Peshawar": {
+        "19-02": ("5:31 AM", "6:01 PM"), "20-02": ("5:30 AM", "6:02 PM"),
+    },
+    "Gujranwala": {
+        "19-02": ("5:20 AM", "5:52 PM"), "20-02": ("5:19 AM", "5:53 PM"),
+    },
+    "Multan": {
+        "19-02": ("5:31 AM", "6:05 PM"), "20-02": ("5:30 AM", "6:06 PM"),
+    },
+    "Layyah": {},
+    "Hafizabad": {},
+    "Bahawalpur": {},
+    "Pattoki": {},
+    "Attock": {},
+    "Karachi": {},
 }
 
 # -------------------- Duas --------------------
@@ -42,23 +53,6 @@ HADEES_LIST = [
     "📖 *Hadees:* Roza daar ke liye do khushiyan hain: ek iftar ke waqt aur ek apne Rab se mulaqat ke waqt. — Sahih Muslim"
 ]
 
-# -------------------- Fetch Prayer Times --------------------
-def fetch_prayer_times(city, country):
-    """Fetch Sehri & Iftar time from IslamicFinder API"""
-    try:
-        # IslamicFinder API endpoint (public prayer times API)
-        url = f"https://api.pray.zone/v2/times/today.json?city={city}&country={country}&school=1"
-        response = requests.get(url, timeout=10).json()
-        times = response["results"]["datetime"][0]["times"]
-
-        # Convert to 12-hour format
-        sehri = datetime.strptime(times["Fajr"], "%H:%M").strftime("%I:%M %p")
-        iftar = datetime.strptime(times["Maghrib"], "%H:%M").strftime("%I:%M %p")
-        return sehri, iftar
-    except Exception as e:
-        print(f"Error fetching times: {e}")
-        return None, None
-
 # -------------------- Keyboards --------------------
 def main_menu():
     return InlineKeyboardMarkup([
@@ -68,7 +62,7 @@ def main_menu():
 
 def cities_menu(action):
     buttons = []
-    for city in CITIES.keys():
+    for city in CITIES_CALENDAR.keys():
         buttons.append([InlineKeyboardButton(city, callback_data=f"{action}|{city}")])
     return InlineKeyboardMarkup(buttons)
 
@@ -97,20 +91,23 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     else:
         action, city = data.split("|")
-        city_info = CITIES.get(city)
-        sehri, iftar = fetch_prayer_times(city_info["city"], city_info["country"])
-
-        if sehri is None:
+        today = datetime.now().strftime("%d-%m")
+        calendar = CITIES_CALENDAR.get(city)
+        if calendar is None or today not in calendar:
             await query.edit_message_text("⚠️ Timing fetch nahi ho paayi. Try later.")
             return
 
+        sehri, iftar = calendar[today]
+        time_value = sehri if action == "sehri" else iftar
         random_hadees = random.choice(HADEES_LIST)
         dua = SEHRI_DUA if action == "sehri" else IFTAR_DUA
-        time_value = sehri if action == "sehri" else iftar
+        roza_number = list(calendar.keys()).index(today) + 1
 
         await query.edit_message_text(
             f"📍 *City:* {city}\n"
-            f"⏰ *{action.capitalize()} Time:* {time_value}\n\n"
+            f"📅 *Date:* {today}\n"
+            f"⏰ *{action.capitalize()} Time:* {time_value}\n"
+            f"Aj Ramzan ka ({roza_number}) roza hay\n\n"
             f"{dua}\n\n"
             f"{random_hadees}",
             parse_mode="Markdown"
